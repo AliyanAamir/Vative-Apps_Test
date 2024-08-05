@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      background-color: #fff;
+    }
+
+    #form {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      background-color: #f8f8f8;
+    }
+
+    #input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #button:hover {
+      background-color: #218838;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 5px;
+      border-radius: 5px;
+      background-color: #e9ecef;
+    }
+
+    .message strong {
+      color: #343a40;
+    }
+  </style>
+</head>
+<body>
+  <div id="messages"></div>
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Type your message here..." />
+    <button id="button">Send</button>
+  </form>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('message', input.value);
+        input.value = '';
+      }
+    });
+
+    socket.on('message', (msg) => {
+      const item = document.createElement('div');
+      item.className = 'message';
+      item.innerHTML = `<strong>${msg.username}:</strong> ${msg.text}`;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
